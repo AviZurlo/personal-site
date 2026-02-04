@@ -10,9 +10,10 @@
   },
   "dependencies": {
     "@astrojs/react": "^3.0.0",
+    "@astrojs/vercel": "^9.0.4",
+    "@codemirror/lang-markdown": "^6.2.0",
     "@tailwindcss/vite": "^4.1.18",
     "@uiw/react-codemirror": "^4.21.0",
-    "@codemirror/lang-markdown": "^6.2.0",
     "astro": "^5.17.1",
     "gray-matter": "^4.0.3",
     "jose": "^5.0.0",
