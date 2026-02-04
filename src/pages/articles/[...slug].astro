@@ -1,0 +1,76 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getSession } from '../../lib/auth';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await article.render();
+
+// Check if user is authenticated (only in dev mode)
+const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)) : false;
+---
+
+<Layout
+  title={article.data.title}
+  description={article.data.description}
+>
+  <div style="margin-bottom: 48px;">
+    <a
+      href="/"
+      style="color: var(--text-tertiary); font-size: 13px; border: none;"
+    >
+      ← Back
+    </a>
+  </div>
+
+  <article>
+    <header style="margin-bottom: 48px;">
+      {isAuthenticated && (
+        <div style="margin-bottom: 16px;">
+          <a
+            href={`/admin/edit/article/${article.slug}`}
+            style="display: inline-block; padding: 8px 16px; background: #3b82f6; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; border: none;"
+          >
+            Edit this article
+          </a>
+        </div>
+      )}
+      <h1 style="font-size: 32px; font-weight: 400; margin-bottom: 16px; color: var(--text-primary); letter-spacing: -0.02em;">{article.data.title}</h1>
+      <div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-quaternary);">
+        <time>
+          {article.data.date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </time>
+        {article.data.source !== 'original' && (
+          <span>
+            Originally on {article.data.source}
+          </span>
+        )}
+      </div>
+    </header>
+
+    <div class="prose" style="color: var(--text-secondary);">
+      <Content />
+    </div>
+  </article>
+
+  <div style="margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--border-secondary);">
+    <a
+      href="/"
+      style="color: var(--text-tertiary); font-size: 13px; border: none;"
+    >
+      ← Back to home
+    </a>
+  </div>
+</Layout>

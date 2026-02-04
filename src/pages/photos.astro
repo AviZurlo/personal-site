@@ -1,0 +1,117 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { readdir } from 'fs/promises';
+import { join } from 'path';
+
+// Get all photos from public/photos
+let photos: string[] = [];
+try {
+  const photosDir = join(process.cwd(), 'public/photos');
+  const files = await readdir(photosDir);
+  photos = files.filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file));
+} catch (error) {
+  console.log('No photos directory found');
+}
+---
+
+<Layout title="Photos - Avi Zurlo">
+  <h1 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Photos</h1>
+
+  {photos.length > 0 ? (
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 48px;">
+      <div id="slideshow" style="text-align: center; width: 100%;">
+        <img
+          id="current-photo"
+          src=""
+          alt=""
+          style="max-width: 100%; max-height: 65vh; display: block; margin: 0 auto;"
+        />
+      </div>
+
+      <div style="display: flex; justify-content: center; align-items: center; gap: 32px; width: 100%;">
+        <button
+          id="prev"
+          class="photo-btn"
+          style="background: none; border: 1px solid var(--border-primary); padding: 8px 16px; cursor: pointer; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13px; color: var(--text-primary); transition: all 0.2s;"
+        >
+          ←
+        </button>
+
+        <span id="counter" style="font-size: 13px; color: var(--text-tertiary); min-width: 60px; text-align: center;"></span>
+
+        <button
+          id="next"
+          class="photo-btn"
+          style="background: none; border: 1px solid var(--border-primary); padding: 8px 16px; cursor: pointer; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13px; color: var(--text-primary); transition: all 0.2s;"
+        >
+          →
+        </button>
+      </div>
+    </div>
+
+    <script define:vars={{ photos }}>
+      // Shuffle array function
+      function shuffle(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+
+      // Initialize slideshow
+      const shuffledPhotos = shuffle(photos);
+      let currentIndex = 0;
+
+      const photoImg = document.getElementById('current-photo');
+      const counter = document.getElementById('counter');
+      const prevBtn = document.getElementById('prev');
+      const nextBtn = document.getElementById('next');
+
+      function updatePhoto() {
+        photoImg.src = `/photos/${shuffledPhotos[currentIndex]}`;
+        counter.textContent = `${currentIndex + 1} / ${shuffledPhotos.length}`;
+      }
+
+      prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + shuffledPhotos.length) % shuffledPhotos.length;
+        updatePhoto();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % shuffledPhotos.length;
+        updatePhoto();
+      });
+
+      // Hover effects
+      const buttons = document.querySelectorAll('.photo-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+          const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+          const textColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim();
+          btn.style.background = bgColor;
+          btn.style.color = textColor;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.background = 'none';
+          btn.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+        });
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          prevBtn.click();
+        } else if (e.key === 'ArrowRight') {
+          nextBtn.click();
+        }
+      });
+
+      // Initial load
+      updatePhoto();
+    </script>
+  ) : (
+    <p style="color: var(--text-quaternary);">No photos yet.</p>
+  )}
+</Layout>

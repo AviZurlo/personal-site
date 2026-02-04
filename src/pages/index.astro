@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getSession } from '../lib/auth';
+
+// Get all articles and sort by date
+const articles = (await getCollection('articles')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// Check if user is authenticated (only in dev mode)
+const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)) : false;
+---
+
+<Layout title="Avi Zurlo">
+  <div style="margin-bottom: 80px;">
+    <img
+      src="/profile.jpeg"
+      alt="Avi Zurlo"
+      style="width: 96px; height: 96px; margin-bottom: 24px; object-fit: cover; display: block;"
+    />
+    <p style="font-size: 16px; line-height: 1.6; color: var(--text-secondary); max-width: 600px; margin: 0;">
+      I'm Avi. I'm an operator, investor, and builder. Currently I'm exploring how robot foundation models will be deployed in the real-world.
+    </p>
+  </div>
+
+  <div>
+    <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Articles</h2>
+
+    {articles.length === 0 ? (
+      <p style="color: var(--text-quaternary);">No articles yet.</p>
+    ) : (
+      <div style="display: flex; flex-direction: column; gap: 0;">
+        {articles.map((article, index) => (
+          <article style={`padding: 24px 0; ${index !== articles.length - 1 ? 'border-bottom: 1px solid var(--border-secondary);' : ''}`}>
+            <a href={`/articles/${article.slug}`} style="text-decoration: none; border: none; display: block;">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <h3 style="font-size: 18px; font-weight: 400; margin: 0; color: var(--text-primary); letter-spacing: -0.01em;">
+                  {article.data.title}
+                </h3>
+                {isAuthenticated && (
+                  <a
+                    href={`/admin/edit/article/${article.slug}`}
+                    style="font-size: 12px; color: #3b82f6; text-decoration: none; border: none; padding: 2px 6px; background: #eff6ff; border-radius: 3px;"
+                    onclick="event.stopPropagation();"
+                  >
+                    edit
+                  </a>
+                )}
+              </div>
+              <time style="font-size: 13px; color: var(--text-quaternary); display: block; margin-bottom: 12px;">
+                {article.data.date.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+              <p style="color: var(--text-tertiary); line-height: 1.5; font-size: 15px;">{article.data.description}</p>
+            </a>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</Layout>

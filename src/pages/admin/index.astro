@@ -1,0 +1,107 @@
+---
+import { getSession } from '../../lib/auth';
+import { listArticles } from '../../lib/content-manager';
+
+// Only allow in development
+if (import.meta.env.PROD) {
+  return Astro.redirect('/');
+}
+
+// Check authentication
+const session = await getSession(Astro.cookies);
+if (!session) {
+  return Astro.redirect('/admin/login');
+}
+
+// Get articles
+const articles = await listArticles();
+
+const handleLogout = async () => {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/admin/login';
+};
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Editor - Admin</title>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <h1 class="text-2xl font-bold">Content Editor</h1>
+        <button
+          onclick="handleLogout()"
+          class="text-sm text-gray-300 hover:text-white"
+        >
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+        <p class="text-sm text-yellow-800">
+          <strong>Development Mode:</strong> This editor is only available in development. Changes are saved directly to markdown files.
+        </p>
+      </div>
+
+      <!-- Pages Section -->
+      <section class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Pages</h2>
+        <div class="bg-white shadow overflow-hidden rounded-md">
+          <ul class="divide-y divide-gray-200">
+            <li>
+              <a
+                href="/admin/edit/about"
+                class="block hover:bg-gray-50 px-6 py-4 flex items-center justify-between"
+              >
+                <div>
+                  <p class="text-lg font-medium text-gray-900">About Page</p>
+                  <p class="text-sm text-gray-500">Edit your about content</p>
+                </div>
+                <span class="text-blue-600">Edit →</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Articles Section -->
+      <section>
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Articles ({articles.length})</h2>
+        <div class="bg-white shadow overflow-hidden rounded-md">
+          <ul class="divide-y divide-gray-200">
+            {articles.map((slug) => (
+              <li>
+                <a
+                  href={`/admin/edit/article/${slug}`}
+                  class="block hover:bg-gray-50 px-6 py-4 flex items-center justify-between"
+                >
+                  <div>
+                    <p class="text-lg font-medium text-gray-900">{slug}</p>
+                  </div>
+                  <span class="text-blue-600">Edit →</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    async function handleLogout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/admin/login';
+    }
+  </script>
+</body>
+</html>

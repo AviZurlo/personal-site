@@ -1,0 +1,37 @@
+---
+import { getSession } from '../../../../lib/auth';
+import ArticleEditor from '../../../../components/Editor/ArticleEditor';
+
+// Only allow in development
+if (import.meta.env.PROD) {
+  return Astro.redirect('/');
+}
+
+// Check authentication
+const session = await getSession(Astro.cookies);
+if (!session) {
+  return Astro.redirect('/admin/login');
+}
+
+const { slug } = Astro.params;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Article - {slug}</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <ArticleEditor client:load slug={slug} />
+</body>
+</html>

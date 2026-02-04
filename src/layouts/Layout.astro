@@ -1,0 +1,200 @@
+---
+import '../styles/global.css';
+import { getSession } from '../lib/auth';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Avi Zurlo" } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+// Check if user is authenticated (only in dev mode)
+const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)) : false;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script is:inline>
+      // Initialize theme before page renders to prevent flash
+      const theme = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+      header {
+        margin-top: 64px;
+        margin-bottom: 64px;
+      }
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border-primary);
+      }
+      .logo {
+        font-size: 16px;
+        font-weight: 400;
+        color: var(--text-primary);
+        text-decoration: none;
+        border: none;
+        letter-spacing: 0.02em;
+      }
+      .logo:hover {
+        opacity: 0.5;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      nav {
+        display: flex;
+        gap: 24px;
+      }
+      nav a {
+        font-size: 14px;
+        color: var(--text-tertiary);
+        text-decoration: none;
+        border: none;
+        transition: color 0.2s;
+      }
+      nav a:hover {
+        color: var(--text-primary);
+        opacity: 1;
+      }
+      nav a.active {
+        color: var(--text-primary);
+      }
+      .theme-toggle {
+        background: none;
+        border: 1px solid var(--border-primary);
+        color: var(--text-primary);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px 8px;
+        transition: all 0.2s;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+      .theme-toggle:hover {
+        background: var(--text-primary);
+        color: var(--bg-primary);
+      }
+      main {
+        flex: 1;
+      }
+      footer {
+        margin-top: 96px;
+        padding-top: 24px;
+        padding-bottom: 48px;
+        border-top: 1px solid var(--border-secondary);
+        font-size: 13px;
+        color: var(--text-tertiary);
+      }
+      footer a {
+        color: var(--text-tertiary);
+        border: none;
+        margin: 0 8px 0 0;
+      }
+      footer a:hover {
+        color: var(--text-primary);
+        opacity: 1;
+      }
+      .edit-mode-banner {
+        background: #fef3c7;
+        border-bottom: 1px solid #f59e0b;
+        padding: 8px 0;
+        text-align: center;
+        font-size: 13px;
+        color: #92400e;
+      }
+      .edit-mode-banner a {
+        color: #92400e;
+        text-decoration: underline;
+        border: none;
+      }
+      .edit-mode-banner a:hover {
+        color: #78350f;
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    {isAuthenticated && (
+      <div class="edit-mode-banner">
+        Edit Mode Active | <a href="/admin">Go to Admin Dashboard</a>
+      </div>
+    )}
+    <header>
+      <div class="header-content">
+        <a href="/" class="logo">AVI ZURLO</a>
+        <div class="header-right">
+          <nav>
+            <a href="/" class={currentPath === '/' ? 'active' : ''}>Home</a>
+            <a href="/about" class={currentPath === '/about' ? 'active' : ''}>About</a>
+            <a href="/photos" class={currentPath === '/photos' ? 'active' : ''}>Photos</a>
+            <a href="/investments" class={currentPath === '/investments' ? 'active' : ''}>Investments</a>
+            <a href="/resume" class={currentPath === '/resume' ? 'active' : ''}>Resume</a>
+          </nav>
+          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+            <span id="theme-icon">○</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <div style="margin-bottom: 8px;">Brooklyn, NY</div>
+      <div>
+        <a href="mailto:avidzurlo@gmail.com">Email</a>
+        <a href="https://x.com/avizurlo">X</a>
+        <a href="https://www.linkedin.com/in/avi-zurlo-2b0760104/">LinkedIn</a>
+      </div>
+    </footer>
+
+    <script>
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = document.getElementById('theme-icon');
+
+      function updateThemeIcon() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        themeIcon.textContent = currentTheme === 'dark' ? '●' : '○';
+      }
+
+      themeToggle?.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon();
+      });
+
+      // Initialize icon
+      updateThemeIcon();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+---
+import { getSession } from '../../../lib/auth';
+import AboutEditor from '../../../components/Editor/AboutEditor';
+
+// Only allow in development
+if (import.meta.env.PROD) {
+  return Astro.redirect('/');
+}
+
+// Check authentication
+const session = await getSession(Astro.cookies);
+if (!session) {
+  return Astro.redirect('/admin/login');
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit About Page</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <AboutEditor client:load />
+</body>
+</html>

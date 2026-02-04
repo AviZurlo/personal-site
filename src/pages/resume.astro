@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { existsSync } from 'fs';
+import { join } from 'path';
+
+// Check if resume.pdf exists
+const resumePath = join(process.cwd(), 'public/resume.pdf');
+const hasResume = existsSync(resumePath);
+---
+
+<Layout title="Resume - Avi Zurlo">
+  <h1 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Resume</h1>
+
+  {hasResume ? (
+    <div style="border: 1px solid var(--border-secondary); overflow: hidden;">
+      <iframe
+        src="/resume.pdf#zoom=75"
+        style="width: 100%; height: 800px; border: none;"
+        title="Resume PDF"
+      />
+    </div>
+  ) : (
+    <div style="padding: 64px 0;">
+      <p style="color: var(--text-quaternary); margin-bottom: 16px;">
+        No resume uploaded yet.
+      </p>
+      <p style="font-size: 13px; color: var(--text-quaternary);">
+        Add your resume.pdf to the public/ folder
+      </p>
+    </div>
+  )}
+</Layout>
