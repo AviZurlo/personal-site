@@ -2,6 +2,11 @@ import type { APIRoute } from 'astro';
 import { getArticle, updateArticle } from '../../../../lib/content-manager';
 import { requireAuth } from '../../../../lib/auth';
 
+export async function getStaticPaths() {
+  // Don't generate any static pages for admin API routes
+  return [];
+}
+
 export const GET: APIRoute = async ({ params }) => {
   // Only allow in development
   if (import.meta.env.PROD) {
