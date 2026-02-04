@@ -10,12 +10,22 @@ const aboutPath = join(process.cwd(), 'src/content/about.md');
 const aboutContent = await readFile(aboutPath, 'utf-8');
 const aboutText = aboutContent.replace(/^---[\s\S]*?---\n/, '');
 
-// Split content at the Interests section
-const parts = aboutText.split('## Interests');
-const beforeInterests = parts[0];
+// Split content by h2 headers
+const sections = aboutText.split(/^## /m).filter(Boolean);
 
-// Convert markdown to HTML
-const beforeHtml = marked(beforeInterests);
+// Parse each section
+const earlyYearsSection = sections.find(s => s.startsWith('EARLY YEARS'));
+const cryptoSection = sections.find(s => s.startsWith('CRYPTO'));
+const currentlySection = sections.find(s => s.startsWith('CURRENTLY'));
+
+// Remove headers from content and convert to HTML
+const earlyYearsText = earlyYearsSection?.replace(/^EARLY YEARS\n/, '') || '';
+const cryptoText = cryptoSection?.replace(/^CRYPTO\n/, '') || '';
+const currentlyText = currentlySection?.replace(/^CURRENTLY\n/, '') || '';
+
+const earlyYearsHtml = marked(earlyYearsText);
+const cryptoHtml = marked(cryptoText);
+const currentlyHtml = marked(currentlyText);
 
 // Check if user is authenticated (only in dev mode)
 const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)) : false;
@@ -32,7 +42,21 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
       </a>
     </div>
   )}
-  <div class="prose about-content" set:html={beforeHtml} />
+
+  <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">
+    EARLY YEARS
+  </h2>
+  <div class="prose about-content" set:html={earlyYearsHtml} />
+
+  <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; margin-top: 80px; text-transform: uppercase; letter-spacing: 0.1em;">
+    CRYPTO
+  </h2>
+  <div class="prose about-content" set:html={cryptoHtml} />
+
+  <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; margin-top: 80px; text-transform: uppercase; letter-spacing: 0.1em;">
+    CURRENTLY
+  </h2>
+  <div class="prose about-content" set:html={currentlyHtml} />
 
   <div style="margin: 80px 0 0 0;">
     <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Interests</h2>
@@ -70,20 +94,6 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
   <style>
     .about-content :first-child {
       margin-top: 0;
-    }
-
-    .about-content.prose h2 {
-      font-size: 14px !important;
-      font-weight: 400 !important;
-      color: var(--text-tertiary) !important;
-      margin-bottom: 32px !important;
-      margin-top: 80px !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.1em !important;
-    }
-
-    .about-content.prose h2:first-of-type {
-      margin-top: 0 !important;
     }
   </style>
 </Layout>
