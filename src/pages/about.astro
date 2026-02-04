@@ -71,5 +71,19 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
     .about-content :first-child {
       margin-top: 0;
     }
+
+    .about-content h2 {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-tertiary);
+      margin-bottom: 32px;
+      margin-top: 80px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .about-content h2:first-of-type {
+      margin-top: 0;
+    }
   </style>
 </Layout>
