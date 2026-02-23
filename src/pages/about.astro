@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { marked } from 'marked';
-import { getSession } from '../lib/auth';
 
 // Read about content
 const aboutPath = join(process.cwd(), 'src/content/about.md');
@@ -27,20 +26,9 @@ const earlyYearsHtml = marked(earlyYearsText);
 const cryptoHtml = marked(cryptoText);
 const currentlyHtml = marked(currentlyText);
 
-// Check if user is authenticated (only in dev mode)
-const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)) : false;
 ---
 
 <Layout title="About - Avi Zurlo">
-  {isAuthenticated && (
-    <div style="margin-bottom: 24px;">
-      <a
-        href="/admin/edit/about"
-        style="display: inline-block; padding: 8px 16px; background: #3b82f6; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; border: none;"
-      >
-        Edit this page
-      </a>
-    </div>
   )}
 
   <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">

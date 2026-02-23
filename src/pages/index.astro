@@ -1,15 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
-import { getSession } from '../lib/auth';
 
 // Get all articles and sort by date
 const articles = (await getCollection('articles')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
-
-// Check if user is authenticated (only in dev mode)
-const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)) : false;
 ---
 
 <Layout title="Avi Zurlo">

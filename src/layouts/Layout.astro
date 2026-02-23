@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import { getSession } from '../lib/auth';
 
 interface Props {
   title: string;
@@ -11,7 +10,6 @@ const { title, description = "Avi Zurlo" } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 // Check if user is authenticated (only in dev mode)
-const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)) : false;
 ---
 
 <!doctype html>
@@ -285,7 +283,6 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
     </style>
   </head>
   <body>
-    {isAuthenticated && (
       <div class="edit-mode-banner">
         Edit Mode Active | <a href="/admin">Go to Admin Dashboard</a>
       </div>
