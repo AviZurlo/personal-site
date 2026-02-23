@@ -2,8 +2,6 @@ backend:
   name: github
   repo: AviZurlo/personal-site
   branch: main
-  base_url: https://avi.dog
-  auth_endpoint: api/auth/github
 
 media_folder: "public/images/articles"
 public_folder: "/images/articles"

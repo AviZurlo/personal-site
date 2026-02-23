@@ -48,18 +48,25 @@ export const GET: APIRoute = async ({ request, redirect }) => {
     (function() {
       function receiveMessage(e) {
         console.log("receiveMessage %o", e);
-        window.opener.postMessage(
-          'authorization:github:success:${JSON.stringify({
-            token: tokenData.access_token,
-            provider: "github"
-          })}',
-          e.origin
-        );
+        if (window.opener) {
+          window.opener.postMessage(
+            'authorization:github:success:${JSON.stringify({
+              token: tokenData.access_token,
+              provider: "github"
+            })}',
+            e.origin
+          );
+        }
         window.removeEventListener("message", receiveMessage, false);
       }
       window.addEventListener("message", receiveMessage, false);
       console.log("Sending message: %o", "authorizing:github");
-      window.opener.postMessage("authorizing:github", "*");
+      if (window.opener) {
+        window.opener.postMessage("authorizing:github", "*");
+      } else {
+        // Fallback: redirect with token in hash
+        window.location.href = "/admin/#access_token=${tokenData.access_token}&token_type=bearer&provider=github";
+      }
     })();
   </script>
 </body>
