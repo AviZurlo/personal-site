@@ -31,15 +31,6 @@ const { Content } = await article.render();
 
   <article>
     <header class="article-header">
-        <div style="margin-bottom: 16px;">
-          <a
-            href={`/admin/edit/article/${article.slug}`}
-            style="display: inline-block; padding: 8px 16px; background: #3b82f6; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; border: none;"
-          >
-            Edit this article
-          </a>
-        </div>
-      )}
       <h1 class="article-title">{article.data.title}</h1>
       <div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-quaternary);">
         <time>
