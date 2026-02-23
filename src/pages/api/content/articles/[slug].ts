@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
-import { getArticle, updateArticle } from '../../../../lib/content-manager';
+import { getArticle, updateArticle, deleteArticle } from '../../../../lib/content-manager';
 import { requireAuth } from '../../../../lib/auth';
+
+export const prerender = false;
 
 export async function getStaticPaths() {
   // Don't generate any static pages for admin API routes
@@ -8,14 +10,6 @@ export async function getStaticPaths() {
 }
 
 export const GET: APIRoute = async ({ params }) => {
-  // Only allow in development
-  if (import.meta.env.PROD) {
-    return new Response(JSON.stringify({ error: 'Not found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
   const { slug } = params;
 
   if (!slug) {
@@ -48,14 +42,6 @@ export const GET: APIRoute = async ({ params }) => {
 };
 
 export const PUT: APIRoute = async ({ params, request, cookies }) => {
-  // Only allow in development
-  if (import.meta.env.PROD) {
-    return new Response(JSON.stringify({ error: 'Not found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
   // Check authentication
   try {
     await requireAuth(cookies);
@@ -93,6 +79,48 @@ export const PUT: APIRoute = async ({ params, request, cookies }) => {
   } catch (error) {
     return new Response(
       JSON.stringify({ error: 'Failed to update article' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+};
+
+export const DELETE: APIRoute = async ({ params, cookies }) => {
+  // Check authentication
+  try {
+    await requireAuth(cookies);
+  } catch {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const { slug } = params;
+
+  if (!slug) {
+    return new Response(
+      JSON.stringify({ error: 'Slug is required' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  try {
+    const success = await deleteArticle(slug);
+
+    if (!success) {
+      return new Response(
+        JSON.stringify({ error: 'Failed to delete article' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: 'Failed to delete article' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

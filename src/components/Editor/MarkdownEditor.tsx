@@ -1,24 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
 import { EditorView } from '@codemirror/view';
 import ReactMarkdown from 'react-markdown';
+import { imageUploadExtension } from './imageUploadExtension';
 
 interface MarkdownEditorProps {
   initialContent: string;
   onSave: (content: string) => Promise<void>;
   frontmatterEditor?: React.ReactNode;
+  slug?: string;
 }
 
 export default function MarkdownEditor({
   initialContent,
   onSave,
-  frontmatterEditor
+  frontmatterEditor,
+  slug
 }: MarkdownEditorProps) {
   const [content, setContent] = useState(initialContent);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showMetadata, setShowMetadata] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const editorRef = useRef<any>(null);
 
   useEffect(() => {
     setContent(initialContent);
@@ -38,6 +43,52 @@ export default function MarkdownEditor({
       setSaving(false);
     }
   };
+
+  const uploadImage = useCallback(async (file: File): Promise<string | null> => {
+    if (!slug) {
+      setMessage({ type: 'error', text: 'No article slug available' });
+      return null;
+    }
+
+    setUploading(true);
+    setMessage({ type: 'success', text: 'Uploading image...' });
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('slug', slug);
+
+      const response = await fetch('/api/upload/image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const data = await response.json();
+      setMessage({ type: 'success', text: 'Image uploaded!' });
+      setTimeout(() => setMessage(null), 2000);
+      return data.url;
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to upload image' });
+      return null;
+    } finally {
+      setUploading(false);
+    }
+  }, [slug]);
+
+  // Create CodeMirror extension for image upload
+  const imageExtension = useMemo(
+    () =>
+      imageUploadExtension({
+        uploadImage,
+        onUploadStart: () => setUploading(true),
+        onUploadEnd: () => setUploading(false)
+      }),
+    [uploadImage]
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
@@ -140,7 +191,8 @@ export default function MarkdownEditor({
               width="100%"
               extensions={[
                 markdown(),
-                EditorView.lineWrapping
+                EditorView.lineWrapping,
+                imageExtension
               ]}
               onChange={(value) => setContent(value)}
               style={{

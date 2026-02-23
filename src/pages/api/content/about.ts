@@ -2,15 +2,9 @@ import type { APIRoute } from 'astro';
 import { getPage, updatePage } from '../../../lib/content-manager';
 import { requireAuth } from '../../../lib/auth';
 
-export const GET: APIRoute = async () => {
-  // Only allow in development
-  if (import.meta.env.PROD) {
-    return new Response(JSON.stringify({ error: 'Not found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+export const prerender = false;
 
+export const GET: APIRoute = async () => {
   try {
     const page = await getPage('about');
 
@@ -34,14 +28,6 @@ export const GET: APIRoute = async () => {
 };
 
 export const PUT: APIRoute = async ({ request, cookies }) => {
-  // Only allow in development
-  if (import.meta.env.PROD) {
-    return new Response(JSON.stringify({ error: 'Not found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
   // Check authentication
   try {
     await requireAuth(cookies);

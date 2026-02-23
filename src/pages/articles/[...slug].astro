@@ -22,7 +22,7 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
   title={article.data.title}
   description={article.data.description}
 >
-  <div style="margin-bottom: 48px;">
+  <div style="margin-bottom: 32px;">
     <a
       href="/"
       style="color: var(--text-tertiary); font-size: 13px; border: none;"
@@ -32,7 +32,7 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
   </div>
 
   <article>
-    <header style="margin-bottom: 48px;">
+    <header class="article-header">
       {isAuthenticated && (
         <div style="margin-bottom: 16px;">
           <a
@@ -43,7 +43,7 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
           </a>
         </div>
       )}
-      <h1 style="font-size: 32px; font-weight: 400; margin-bottom: 16px; color: var(--text-primary); letter-spacing: -0.02em;">{article.data.title}</h1>
+      <h1 class="article-title">{article.data.title}</h1>
       <div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-quaternary);">
         <time>
           {article.data.date.toLocaleDateString('en-US', {
@@ -65,7 +65,7 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
     </div>
   </article>
 
-  <div style="margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--border-secondary);">
+  <div class="article-footer">
     <a
       href="/"
       style="color: var(--text-tertiary); font-size: 13px; border: none;"
@@ -73,4 +73,43 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
       ← Back to home
     </a>
   </div>
+
+  <style>
+    .article-header {
+      margin-bottom: 32px;
+    }
+
+    @media (min-width: 640px) {
+      .article-header {
+        margin-bottom: 48px;
+      }
+    }
+
+    .article-title {
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    @media (min-width: 640px) {
+      .article-title {
+        font-size: 32px;
+      }
+    }
+
+    .article-footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-secondary);
+    }
+
+    @media (min-width: 640px) {
+      .article-footer {
+        margin-top: 80px;
+        padding-top: 32px;
+      }
+    }
+  </style>
 </Layout>

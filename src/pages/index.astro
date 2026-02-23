@@ -13,29 +13,62 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
 ---
 
 <Layout title="Avi Zurlo">
-  <div style="margin-bottom: 80px;">
+  <div class="profile-section" style="margin-bottom: 48px;">
     <img
       src="/profile.jpeg"
       alt="Avi Zurlo"
-      style="width: 96px; height: 96px; margin-bottom: 24px; object-fit: cover; display: block;"
+      style="width: 80px; height: 80px; margin-bottom: 20px; object-fit: cover; display: block;"
     />
-    <p style="font-size: 16px; line-height: 1.6; color: var(--text-secondary); max-width: 600px; margin: 0;">
+    <p style="font-size: 15px; line-height: 1.6; color: var(--text-secondary); max-width: 600px; margin: 0;">
       I'm Avi. I'm an operator, investor, and builder. Currently I'm exploring how robot foundation models will be deployed in the real-world.
     </p>
   </div>
 
+  <style>
+    .article-title-container {
+      margin-bottom: 12px;
+    }
+
+    .article-title {
+      line-height: 1.0 !important;
+    }
+
+    @media (min-width: 640px) {
+      .profile-section {
+        margin-bottom: 80px !important;
+      }
+      .profile-section img {
+        width: 96px !important;
+        height: 96px !important;
+        margin-bottom: 24px !important;
+      }
+      .profile-section p {
+        font-size: 16px !important;
+      }
+      .article-item {
+        padding: 24px 0 !important;
+      }
+      .article-title {
+        font-size: 18px !important;
+      }
+      .article-title-container {
+        margin-bottom: 12px !important;
+      }
+    }
+  </style>
+
   <div>
-    <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Articles</h2>
+    <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.1em;">Articles</h2>
 
     {articles.length === 0 ? (
       <p style="color: var(--text-quaternary);">No articles yet.</p>
     ) : (
       <div style="display: flex; flex-direction: column; gap: 0;">
         {articles.map((article, index) => (
-          <article style={`padding: 24px 0; ${index !== articles.length - 1 ? 'border-bottom: 1px solid var(--border-secondary);' : ''}`}>
+          <article style={`padding: 20px 0; ${index !== articles.length - 1 ? 'border-bottom: 1px solid var(--border-secondary);' : ''}`} class="article-item">
             <a href={`/articles/${article.slug}`} style="text-decoration: none; border: none; display: block;">
-              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                <h3 style="font-size: 18px; font-weight: 400; margin: 0; color: var(--text-primary); letter-spacing: -0.01em;">
+              <div style="display: flex; align-items: center; gap: 12px;" class="article-title-container">
+                <h3 style="font-size: 16px; font-weight: 400; margin: 0; color: var(--text-primary); letter-spacing: -0.01em;" class="article-title">
                   {article.data.title}
                 </h3>
                 {isAuthenticated && (

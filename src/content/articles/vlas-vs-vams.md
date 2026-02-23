@@ -1,11 +1,20 @@
 ---
-title: "VLAs vs VAMs: The Architectural Split Defining Robot Foundation Models"
-date: 2026-01-26
-description: "Two ways to build robot foundation models — VLAs inherit semantic understanding, VAMs inherit physical dynamics. The distinction is a potential paradigm shift."
-tags: ["robotics", "AI", "foundation-models", "VLA", "VAM"]
-source: "x"
+title: 'VLAs vs VAMs: The Architectural Split Defining Robot Foundation Models'
+date: '2026-01-26'
+description: >-
+  Two ways to build robot foundation models — VLAs inherit semantic
+  understanding, VAMs inherit physical dynamics. The distinction is a potential
+  paradigm shift.
+tags:
+  - robotics
+  - AI
+  - foundation-models
+  - VLA
+  - VAM
+source: x
 featured: true
 ---
+
 
 There are two ways to build a robot foundation model right now. Both take in images and output motor commands. Both leverage internet-scale pretraining. But they're making fundamentally different bets about what kind of knowledge matters for robot control.
 

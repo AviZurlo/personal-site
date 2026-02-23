@@ -1,13 +1,9 @@
 import type { APIRoute } from 'astro';
 import { validateCredentials, createSession, setSessionCookie } from '../../../lib/auth';
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request, cookies }) => {
-  // Only allow in development
-  if (import.meta.env.PROD) {
-    return new Response(JSON.stringify({ error: 'Not found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    });
   }
 
   try {

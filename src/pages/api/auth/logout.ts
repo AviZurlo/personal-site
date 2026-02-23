@@ -1,13 +1,9 @@
 import type { APIRoute } from 'astro';
 import { deleteSessionCookie } from '../../../lib/auth';
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ cookies }) => {
-  // Only allow in development
-  if (import.meta.env.PROD) {
-    return new Response(JSON.stringify({ error: 'Not found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    });
   }
 
   deleteSessionCookie(cookies);

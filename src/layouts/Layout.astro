@@ -19,7 +19,7 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <script is:inline>
@@ -38,18 +38,34 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
         flex-direction: column;
         max-width: 800px;
         margin: 0 auto;
-        padding: 0 32px;
+        padding: 0 20px;
+      }
+      @media (min-width: 640px) {
+        body {
+          padding: 0 32px;
+        }
       }
       header {
-        margin-top: 64px;
-        margin-bottom: 64px;
+        margin-top: 32px;
+        margin-bottom: 32px;
+      }
+      @media (min-width: 640px) {
+        header {
+          margin-top: 64px;
+          margin-bottom: 64px;
+        }
       }
       .header-content {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
-        padding-bottom: 24px;
+        padding-bottom: 16px;
         border-bottom: 1px solid var(--border-primary);
+      }
+      @media (min-width: 640px) {
+        .header-content {
+          padding-bottom: 24px;
+        }
       }
       .logo {
         font-size: 16px;
@@ -58,6 +74,7 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
         text-decoration: none;
         border: none;
         letter-spacing: 0.02em;
+        flex-shrink: 0;
       }
       .logo:hover {
         opacity: 0.5;
@@ -65,25 +82,147 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
       .header-right {
         display: flex;
         align-items: center;
-        gap: 24px;
+        gap: 12px;
       }
-      nav {
+      @media (min-width: 640px) {
+        .header-right {
+          gap: 24px;
+        }
+      }
+      .desktop-nav {
         display: flex;
-        gap: 24px;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
       }
-      nav a {
-        font-size: 14px;
+      @media (min-width: 640px) {
+        .desktop-nav {
+          gap: 24px;
+        }
+      }
+      .desktop-nav a {
+        font-size: 13px;
         color: var(--text-tertiary);
         text-decoration: none;
         border: none;
         transition: color 0.2s;
+        white-space: nowrap;
       }
-      nav a:hover {
+      @media (min-width: 640px) {
+        .desktop-nav a {
+          font-size: 14px;
+        }
+      }
+      .desktop-nav a:hover {
         color: var(--text-primary);
         opacity: 1;
       }
-      nav a.active {
+      .desktop-nav a.active {
         color: var(--text-primary);
+      }
+      /* Hamburger Icon - Hidden on desktop */
+      .hamburger {
+        display: none; /* Hidden by default (desktop) */
+        flex-direction: column;
+        gap: 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        z-index: 1001;
+      }
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background-color: var(--text-primary);
+        transition: all 0.3s ease;
+        display: block;
+      }
+      /* Mobile menu overlay */
+      .mobile-menu-overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .mobile-menu-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+      /* Mobile menu container - hidden on desktop */
+      .mobile-menu {
+        display: none;
+      }
+      /* Mobile styles (< 640px) */
+      @media (max-width: 639px) {
+        /* Hide desktop nav on mobile */
+        .desktop-nav {
+          display: none;
+        }
+        /* Show hamburger on mobile */
+        .hamburger {
+          display: flex;
+        }
+        /* Show mobile menu on mobile */
+        .mobile-menu {
+          display: block;
+        }
+        /* Transform hamburger to X when open */
+        .hamburger.active span:nth-child(1) {
+          transform: translateY(6px) rotate(45deg);
+        }
+        .hamburger.active span:nth-child(2) {
+          opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+          transform: translateY(-6px) rotate(-45deg);
+        }
+        /* Mobile menu slides in from right */
+        .mobile-menu {
+          position: fixed;
+          top: 0;
+          right: -280px; /* Start off-screen */
+          width: 280px;
+          height: 100vh;
+          background: #ffffff;
+          z-index: 1000;
+          transition: right 0.3s ease;
+          box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+          overflow-y: auto;
+        }
+        .mobile-menu.active {
+          right: 0 !important; /* Slide in */
+        }
+        /* Nav inside mobile menu */
+        .mobile-menu nav {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          padding: 80px 24px 24px; /* Top padding for hamburger icon space */
+        }
+        /* Mobile nav links - larger tap targets */
+        .mobile-menu nav a {
+          font-size: 16px;
+          padding: 16px 0;
+          border-bottom: 1px solid #e5e7eb;
+          white-space: normal;
+          color: #374151 !important;
+        }
+        .mobile-menu nav a:last-child {
+          border-bottom: none;
+        }
+        .mobile-menu nav a:hover {
+          color: #111827 !important;
+        }
+        .mobile-menu nav a.active {
+          color: #111827 !important;
+        }
       }
       .theme-toggle {
         background: none;
@@ -103,12 +242,19 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
         flex: 1;
       }
       footer {
-        margin-top: 96px;
-        padding-top: 24px;
-        padding-bottom: 48px;
+        margin-top: 48px;
+        padding-top: 16px;
+        padding-bottom: 32px;
         border-top: 1px solid var(--border-secondary);
         font-size: 13px;
         color: var(--text-tertiary);
+      }
+      @media (min-width: 640px) {
+        footer {
+          margin-top: 96px;
+          padding-top: 24px;
+          padding-bottom: 48px;
+        }
       }
       footer a {
         color: var(--text-tertiary);
@@ -148,7 +294,12 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
       <div class="header-content">
         <a href="/" class="logo">AVI ZURLO</a>
         <div class="header-right">
-          <nav>
+          <button class="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <nav class="desktop-nav">
             <a href="/" class={currentPath === '/' ? 'active' : ''}>Home</a>
             <a href="/about" class={currentPath === '/about' ? 'active' : ''}>About</a>
             <a href="/photos" class={currentPath === '/photos' ? 'active' : ''}>Photos</a>
@@ -161,6 +312,17 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
         </div>
       </div>
     </header>
+
+    <div class="mobile-menu-overlay"></div>
+    <div class="mobile-menu">
+      <nav>
+        <a href="/" class={currentPath === '/' ? 'active' : ''}>Home</a>
+        <a href="/about" class={currentPath === '/about' ? 'active' : ''}>About</a>
+        <a href="/photos" class={currentPath === '/photos' ? 'active' : ''}>Photos</a>
+        <a href="/investments" class={currentPath === '/investments' ? 'active' : ''}>Investments</a>
+        <a href="/resume" class={currentPath === '/resume' ? 'active' : ''}>Resume</a>
+      </nav>
+    </div>
 
     <main>
       <slot />
@@ -195,6 +357,43 @@ const isAuthenticated = import.meta.env.DEV ? !!(await getSession(Astro.cookies)
 
       // Initialize icon
       updateThemeIcon();
+
+      // Mobile menu toggle
+      const hamburger = document.querySelector('.hamburger');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+      const navLinks = document.querySelectorAll('.mobile-menu nav a');
+
+      function toggleMenu() {
+        hamburger?.classList.toggle('active');
+        mobileMenu?.classList.toggle('active');
+        mobileMenuOverlay?.classList.toggle('active');
+
+        // Prevent body scroll when menu is open
+        if (mobileMenu?.classList.contains('active')) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
+      }
+
+      function closeMenu() {
+        hamburger?.classList.remove('active');
+        mobileMenu?.classList.remove('active');
+        mobileMenuOverlay?.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      // Toggle menu on hamburger click
+      hamburger?.addEventListener('click', toggleMenu);
+
+      // Close menu on overlay click
+      mobileMenuOverlay?.addEventListener('click', closeMenu);
+
+      // Close menu on nav link click
+      navLinks.forEach(link => {
+        link.addEventListener('click', closeMenu);
+      });
     </script>
   </body>
 </html>

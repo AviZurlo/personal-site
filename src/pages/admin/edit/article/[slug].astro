@@ -2,14 +2,8 @@
 import { getSession } from '../../../../lib/auth';
 import ArticleEditor from '../../../../components/Editor/ArticleEditor';
 
-export async function getStaticPaths() {
-  // Don't generate any static pages for admin routes
-  return [];
-}
+export const prerender = false;
 
-// Only allow in development
-if (import.meta.env.PROD) {
-  return Astro.redirect('/');
 }
 
 // Check authentication

@@ -2,9 +2,8 @@
 import { getSession } from '../../../lib/auth';
 import AboutEditor from '../../../components/Editor/AboutEditor';
 
-// Only allow in development
-if (import.meta.env.PROD) {
-  return Astro.redirect('/');
+export const prerender = false;
+
 }
 
 // Check authentication

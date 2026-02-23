@@ -15,7 +15,7 @@ const hasResume = existsSync(resumePath);
     <div style="border: 1px solid var(--border-secondary); overflow: hidden;">
       <iframe
         src="/resume.pdf#zoom=75"
-        style="width: 100%; height: 800px; border: none;"
+        class="resume-iframe"
         title="Resume PDF"
       />
     </div>
@@ -29,4 +29,18 @@ const hasResume = existsSync(resumePath);
       </p>
     </div>
   )}
+
+  <style>
+    .resume-iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+
+    @media (min-width: 640px) {
+      .resume-iframe {
+        height: 800px;
+      }
+    }
+  </style>
 </Layout>

@@ -233,6 +233,7 @@ export default function ArticleEditor({ slug }: ArticleEditorProps) {
         initialContent={article.content}
         onSave={handleSave}
         frontmatterEditor={frontmatterEditor}
+        slug={slug}
       />
     </div>
   );
