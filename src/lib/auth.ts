@@ -54,8 +54,8 @@ export function deleteSessionCookie(cookies: AstroCookies) {
 }
 
 export function validateCredentials(username: string, password: string): boolean {
-  const validUsername = import.meta.env.EDITOR_USERNAME || 'admin';
-  const validPassword = import.meta.env.EDITOR_PASSWORD || 'password';
+  const validUsername = import.meta.env.ADMIN_USERNAME || 'admin';
+  const validPassword = import.meta.env.ADMIN_PASSWORD || 'password';
 
   return username === validUsername && password === validPassword;
 }
