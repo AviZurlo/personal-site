@@ -1,3 +1,7 @@
+---
+title: Investments
+---
+
 **Delphi Digital**
 
 - LayerZero (Seed)

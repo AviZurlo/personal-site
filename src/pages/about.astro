@@ -1,50 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-import { marked } from 'marked';
+import { getEntry } from 'astro:content';
 
-// Read about content
-const aboutPath = join(process.cwd(), 'src/content/about.md');
-const aboutContent = await readFile(aboutPath, 'utf-8');
-const aboutText = aboutContent.replace(/^---[\s\S]*?---\n/, '');
-
-// Split content by h2 headers
-const sections = aboutText.split(/^## /m).filter(Boolean);
-
-// Parse each section
-const earlyYearsSection = sections.find(s => s.startsWith('EARLY YEARS'));
-const cryptoSection = sections.find(s => s.startsWith('CRYPTO'));
-const currentlySection = sections.find(s => s.startsWith('CURRENTLY'));
-
-// Remove headers from content and convert to HTML
-const earlyYearsText = earlyYearsSection?.replace(/^EARLY YEARS\n/, '') || '';
-const cryptoText = cryptoSection?.replace(/^CRYPTO\n/, '') || '';
-const currentlyText = currentlySection?.replace(/^CURRENTLY\n/, '') || '';
-
-const earlyYearsHtml = marked(earlyYearsText);
-const cryptoHtml = marked(cryptoText);
-const currentlyHtml = marked(currentlyText);
-
+// Get about content from collection
+const aboutEntry = await getEntry('about', 'index');
+const { Content } = await aboutEntry.render();
 ---
 
 <Layout title="About - Avi Zurlo">
-  )}
 
-  <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">
-    EARLY YEARS
-  </h2>
-  <div class="prose about-content" set:html={earlyYearsHtml} />
-
-  <h2 class="section-header">
-    CRYPTO
-  </h2>
-  <div class="prose about-content" set:html={cryptoHtml} />
-
-  <h2 class="section-header">
-    CURRENTLY
-  </h2>
-  <div class="prose about-content" set:html={currentlyHtml} />
+  <div class="prose about-content">
+    <Content />
+  </div>
 
   <div class="interests-section">
     <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Interests</h2>
@@ -84,7 +51,7 @@ const currentlyHtml = marked(currentlyText);
       margin-top: 0;
     }
 
-    .section-header {
+    .about-content :global(h2) {
       font-size: 14px;
       font-weight: 400;
       color: var(--text-tertiary);
@@ -94,9 +61,17 @@ const currentlyHtml = marked(currentlyText);
       letter-spacing: 0.1em;
     }
 
+    .about-content :global(h2:first-of-type) {
+      margin-top: 0;
+    }
+
     @media (min-width: 640px) {
-      .section-header {
+      .about-content :global(h2) {
         margin-top: 80px;
+      }
+
+      .about-content :global(h2:first-of-type) {
+        margin-top: 0;
       }
     }
 

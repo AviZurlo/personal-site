@@ -1,19 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-import { marked } from 'marked';
+import { getEntry } from 'astro:content';
 
-// Read investments content
-const investmentsPath = join(process.cwd(), 'src/content/investments.md');
-const investmentsContent = await readFile(investmentsPath, 'utf-8');
-const investmentsText = investmentsContent.replace(/^---[\s\S]*?---\n/, '');
-
-// Convert markdown to HTML
-const investmentsHtml = marked(investmentsText);
+// Get investments content from collection
+const investmentsEntry = await getEntry('investments', 'index');
+const { Content } = await investmentsEntry.render();
 ---
 
 <Layout title="Investments - Avi Zurlo">
   <h1 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Investments</h1>
-  <div class="prose" set:html={investmentsHtml} />
+  <div class="prose">
+    <Content />
+  </div>
 </Layout>

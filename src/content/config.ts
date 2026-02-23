@@ -12,6 +12,22 @@ const articles = defineCollection({
   }),
 });
 
+const about = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+  }),
+});
+
+const investments = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string().optional(),
+  }),
+});
+
 export const collections = {
   articles,
+  about,
+  investments,
 };
