@@ -1,5 +1,5 @@
 ---
-title: "zkVMs and the Maturing Zero-Knowledge Stack"
+title: "The Maturing Zero-Knowledge Stack"
 date: 2023-10-15
 description: "A framework for ZK developer platforms, proof systems, and the path to ubiquitous verifiable computation."
 tags: ["crypto", "research"]
