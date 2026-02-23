@@ -4,8 +4,6 @@ import { validateCredentials, createSession, setSessionCookie } from '../../../l
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  }
-
   try {
     const { username, password } = await request.json();
 

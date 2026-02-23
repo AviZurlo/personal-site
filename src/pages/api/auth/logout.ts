@@ -4,8 +4,6 @@ import { deleteSessionCookie } from '../../../lib/auth';
 export const prerender = false;
 
 export const POST: APIRoute = async ({ cookies }) => {
-  }
-
   deleteSessionCookie(cookies);
 
   return new Response(
