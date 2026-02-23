@@ -67,15 +67,6 @@ const articles = (await getCollection('articles')).sort(
                 <h3 style="font-size: 16px; font-weight: 400; margin: 0; color: var(--text-primary); letter-spacing: -0.01em;" class="article-title">
                   {article.data.title}
                 </h3>
-                {isAuthenticated && (
-                  <a
-                    href={`/admin/edit/article/${article.slug}`}
-                    style="font-size: 12px; color: #3b82f6; text-decoration: none; border: none; padding: 2px 6px; background: #eff6ff; border-radius: 3px;"
-                    onclick="event.stopPropagation();"
-                  >
-                    edit
-                  </a>
-                )}
               </div>
               <time style="font-size: 13px; color: var(--text-quaternary); display: block; margin-bottom: 12px;">
                 {article.data.date.toLocaleDateString('en-US', {
