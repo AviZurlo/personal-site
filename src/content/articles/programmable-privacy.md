@@ -6,7 +6,7 @@ description: >-
 tags:
   - crypto
   - investing
-source: 
+source: 'original'
 featured: false
 ---
 
