@@ -1,4 +1,11 @@
-# Rebirth of UTXO
+---
+title: "Rebirth of UTXO"
+date: 2026-02-24
+description: "Why the UTXO model handles privacy and scalability more naturally than accounts, and how programmable UTXOs resemble intents."
+tags: ["crypto", "blockchain", "utxo", "privacy", "scalability"]
+source: "original"
+featured: false
+---
 
 *If you squint your eyes, programmable UTXOs look very similar to intents.*
 
