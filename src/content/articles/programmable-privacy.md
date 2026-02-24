@@ -10,8 +10,6 @@ source: 'original'
 featured: false
 ---
 
-# Rebirth of UTXO
-
 There are two ways a blockchain can track who owns what: unspent transaction outputs (UTXOs) and accounts.
 
 Bitcoin uses UTXOs. Think of this like cash. You hand over a $20 bill for a $12 purchase, the bill gets destroyed, and two new outputs are created: $12 to the seller and $8 back to you. Every transaction consumes old outputs and produces new ones.
