@@ -35,11 +35,3 @@ In August 2025, I started DRZ Capital with my best friend to invest in robotics 
 Ultimately, my heart drew me back to operating. The opportunity to deploy frontier foundation models into the real-world was too great to passively participate.
 
 Now I'm looking for full-time roles to do just that.
-
-## Interests
-
-**Endurance sports** — I've completed three Ironman 70.3s and a marathon. Currently training for a full Ironman.
-
-**Coffee** — I maintain ratings for 75+ specialty coffee shops across the world. Happy to share recommendations.
-
-**Reading** — My favorite book is *When We Cease to Understand the World* by Benjamín Labatut. I'm drawn to writing that sits at the edge of science and philosophy.
