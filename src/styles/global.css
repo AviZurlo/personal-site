@@ -1,7 +1,4 @@
-@import "tailwindcss";
-
-@layer base {
-  :root {
+:root {
     --bg-primary: #fff;
     --bg-secondary: #fafafa;
     --text-primary: #000;
@@ -206,4 +203,3 @@
     border-top: 1px solid var(--border-secondary);
     margin: 3rem 0;
   }
-}

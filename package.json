@@ -9,18 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^3.0.0",
     "@astrojs/vercel": "^9.0.4",
-    "@octokit/rest": "^22.0.1",
-    "@tailwindcss/vite": "^4.1.18",
-    "@vercel/blob": "^2.3.0",
-    "astro": "^5.17.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "tailwindcss": "^4.1.18"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0"
+    "astro": "^5.17.1"
   }
 }

@@ -1,8 +1,12 @@
 # Personal Website - Avi Zurlo
 
-A minimal, content-focused personal website built with Astro and Tailwind CSS.
+A minimal, content-focused personal website built with Astro. Clean, fast, and easy to maintain.
 
-## Getting Started
+## Editing Content
+
+**The easiest way to edit content is directly on GitHub.** See [HOW_TO_EDIT_ARTICLES.md](./HOW_TO_EDIT_ARTICLES.md) for a complete guide.
+
+## Local Development
 
 ### Install Dependencies
 
@@ -24,11 +28,13 @@ Visit `http://localhost:4321` to see your site.
 npm run build
 ```
 
+**Note:** A pre-push git hook automatically runs the build before every push to prevent broken deployments.
+
 ## Content Structure
 
 ### Articles
 
-Add article markdown files to `src/content/articles/`. Each article should have frontmatter:
+Articles live in `src/content/articles/`. Each article needs frontmatter:
 
 ```yaml
 ---
@@ -36,20 +42,26 @@ title: "Your Article Title"
 date: 2024-01-15
 description: "A brief description"
 tags: ["tag1", "tag2"]
-source: "original"  # or "mirror" or "x"
+source: "original"  # Must be: "original", "mirror", or "x"
 featured: false
 ---
 
 Your article content here...
 ```
 
-### About
+**Edit on GitHub:** [src/content/articles](https://github.com/AviZurlo/personal-site/tree/main/src/content/articles)
 
-Edit `src/content/about.md` with your personal information and bio.
+### About Page
+
+Edit `src/content/about/index.md` to update your bio and background.
+
+**Edit on GitHub:** [src/content/about/index.md](https://github.com/AviZurlo/personal-site/blob/main/src/content/about/index.md)
 
 ### Investments
 
-Edit `src/content/investments.md` with your investment thesis and portfolio companies.
+Edit `src/content/investments/index.md` to update your portfolio.
+
+**Edit on GitHub:** [src/content/investments/index.md](https://github.com/AviZurlo/personal-site/blob/main/src/content/investments/index.md)
 
 ### Photos
 
@@ -61,45 +73,53 @@ Add your `resume.pdf` to the `public/` folder.
 
 ## Deployment
 
-This site is configured for Vercel deployment:
+This site auto-deploys to Vercel:
 
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Deploy automatically on every push to main
-4. Configure your custom domain (avizurlo.com) in Vercel settings
+1. **Push to GitHub** → Vercel automatically builds and deploys
+2. **Live in ~2 minutes** at [avi.dog](https://avi.dog)
+3. **Pre-push hook** ensures builds succeed before pushing
 
 ## Project Structure
 
 ```
 /
+├── .githooks/
+│   └── pre-push           # Auto-validates builds before push
 ├── public/
-│   ├── photos/         # Photo gallery images
-│   └── resume.pdf      # Your resume PDF
+│   ├── photos/            # Photo gallery images
+│   ├── favicon.svg        # Site favicon
+│   └── resume.pdf         # Your resume PDF
 ├── src/
 │   ├── content/
-│   │   ├── articles/   # Article markdown files
-│   │   ├── about.md    # About page content
-│   │   └── investments.md
+│   │   ├── articles/      # Article markdown files
+│   │   ├── about/
+│   │   │   └── index.md   # About page content
+│   │   └── investments/
+│   │       └── index.md   # Investments page content
 │   ├── layouts/
-│   │   └── Layout.astro # Main layout with header
+│   │   └── Layout.astro   # Main layout with header/footer
 │   ├── pages/
-│   │   ├── index.astro      # Homepage (about + articles)
+│   │   ├── index.astro    # Homepage (bio + articles list)
+│   │   ├── about.astro    # About page
 │   │   ├── articles/
-│   │   │   └── [...slug].astro  # Article detail pages
-│   │   ├── photos.astro     # Photo gallery
-│   │   ├── resume.astro     # Resume page
+│   │   │   └── [...slug].astro  # Dynamic article pages
+│   │   ├── photos.astro   # Photo gallery
+│   │   ├── resume.astro   # Resume page
 │   │   └── investments.astro
 │   └── styles/
-│       └── global.css   # Global styles
+│       └── global.css     # Global styles & CSS variables
+├── HOW_TO_EDIT_ARTICLES.md   # Complete editing guide
+├── REPO_STRUCTURE.md          # Detailed repo documentation
 └── package.json
 ```
 
 ## Tech Stack
 
-- **Framework**: [Astro](https://astro.build)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com)
+- **Framework**: [Astro](https://astro.build) (static site generation)
+- **Styling**: Vanilla CSS with custom properties
 - **Hosting**: [Vercel](https://vercel.com)
-- **Domain**: avizurlo.com
+- **Domain**: [avi.dog](https://avi.dog)
+- **Content**: Markdown with Astro Content Collections
 
 ## Design Principles
 
