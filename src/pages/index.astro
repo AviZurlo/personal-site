@@ -55,7 +55,7 @@ const articles = (await getCollection('articles')).sort(
 
   <div style="margin-bottom: 48px;">
     <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.1em;">Projects</h2>
-    <div style="display: flex; flex-direction: column; gap: 0;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;">
       {[
         {
           name: "ScopeDraft",
@@ -72,13 +72,11 @@ const articles = (await getCollection('articles')).sort(
           url: "https://github.com/AviZurlo/robot-sim",
           description: "Diagnostic probes for evaluating VLA model behavior in simulation."
         }
-      ].map((project, index, arr) => (
-        <div style={`padding: 20px 0; ${index !== arr.length - 1 ? 'border-bottom: 1px solid var(--border-secondary);' : ''}`}>
-          <a href={project.url} target="_blank" rel="noopener noreferrer" style="text-decoration: none; border: none; display: block;">
-            <h3 style="font-size: 16px; font-weight: 400; margin: 0 0 8px 0; color: var(--text-primary); letter-spacing: -0.01em;">{project.name}</h3>
-            <p style="color: var(--text-tertiary); line-height: 1.5; font-size: 15px; margin: 0;">{project.description}</p>
-          </a>
-        </div>
+      ].map((project) => (
+        <a href={project.url} target="_blank" rel="noopener noreferrer" style="text-decoration: none; border: 1px solid var(--border-secondary); border-radius: 8px; padding: 20px; display: block; transition: border-color 0.15s ease;" onmouseover="this.style.borderColor='var(--text-quaternary)'" onmouseout="this.style.borderColor='var(--border-secondary)'">
+          <h3 style="font-size: 15px; font-weight: 400; margin: 0 0 8px 0; color: var(--text-primary); letter-spacing: -0.01em;">{project.name}</h3>
+          <p style="color: var(--text-tertiary); line-height: 1.5; font-size: 14px; margin: 0;">{project.description}</p>
+        </a>
       ))}
     </div>
   </div>
