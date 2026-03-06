@@ -53,6 +53,36 @@ const articles = (await getCollection('articles')).sort(
     }
   </style>
 
+  <div style="margin-bottom: 48px;">
+    <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.1em;">Projects</h2>
+    <div style="display: flex; flex-direction: column; gap: 0;">
+      {[
+        {
+          name: "ScopeDraft",
+          url: "https://scopedraft.ai",
+          description: "AI-powered proposal generation for systems integrators."
+        },
+        {
+          name: "Robot Foundation Models Dashboard",
+          url: "https://avizurlo.github.io/robot-foundation-models/",
+          description: "Interactive comparison of VLA models across standardized benchmarks."
+        },
+        {
+          name: "VLA Probing",
+          url: "https://github.com/AviZurlo/robot-sim",
+          description: "Diagnostic probes for evaluating VLA model behavior in simulation."
+        }
+      ].map((project, index, arr) => (
+        <div style={`padding: 20px 0; ${index !== arr.length - 1 ? 'border-bottom: 1px solid var(--border-secondary);' : ''}`}>
+          <a href={project.url} target="_blank" rel="noopener noreferrer" style="text-decoration: none; border: none; display: block;">
+            <h3 style="font-size: 16px; font-weight: 400; margin: 0 0 8px 0; color: var(--text-primary); letter-spacing: -0.01em;">{project.name}</h3>
+            <p style="color: var(--text-tertiary); line-height: 1.5; font-size: 15px; margin: 0;">{project.description}</p>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+
   <div>
     <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.1em;">Articles</h2>
 
