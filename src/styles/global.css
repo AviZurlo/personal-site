@@ -193,6 +193,14 @@
     opacity: 0.5;
   }
 
+  .prose img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 2rem 0;
+    border: 1px solid var(--border-secondary);
+  }
+
   .prose strong {
     font-weight: 500;
     color: var(--text-primary);
