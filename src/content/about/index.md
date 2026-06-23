@@ -33,5 +33,3 @@ I spent a few months  traveling, meditating, and exploring what's next. Similar 
 In August 2025, I started DRZ Capital with my best friend to invest in robotics companies. We were backed by a large family office and ran a couple of SPVs. I visited top labs across North America, met with dozens of founders, and built a network of researchers, hardware specialists, and enterprise buyers.
 
 Ultimately, my heart drew me back to operating. The opportunity to deploy frontier foundation models into the real-world was too great to passively participate.
-
-Now I'm looking for full-time roles to do just that.

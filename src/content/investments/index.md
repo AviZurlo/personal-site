@@ -20,5 +20,5 @@ title: Investments
 - Zorp (Seed)
 - Jia (Pre-seed)
 - Mastery (Pre-seed)
-- Robostrategies
+- Robostrategy ($BOT)
 - Citrea (Advisor)
