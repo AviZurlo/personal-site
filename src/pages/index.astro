@@ -16,13 +16,19 @@ const articles = (await getCollection('articles')).sort(
       style="width: 80px; height: 80px; margin-bottom: 20px; object-fit: cover; display: block;"
     />
     <p style="font-size: 15px; line-height: 1.6; color: var(--text-secondary); max-width: 600px; margin: 0 0 12px 0;">
-      I'm Avi. I deploy robots.
+      I’m Avi. I’ve been building and learning at the frontier of robotics, specifically robot learning and its economic impact.
     </p>
     <p style="font-size: 15px; line-height: 1.6; color: var(--text-secondary); max-width: 600px; margin: 0 0 12px 0;">
-      Before this, I was the CEO of crypto startup (<a href="https://nil.foundation/" target="_blank" rel="noopener noreferrer">=nil; Foundation</a>) and the top-performing investor at a top-performing venture fund (<a href="https://delphiventures.io/" target="_blank" rel="noopener noreferrer">Delphi Digital</a>).
+      My broader interests include:
     </p>
+    <ul style="font-size: 15px; line-height: 1.6; color: var(--text-secondary); max-width: 600px; margin: 0 0 16px; padding-left: 20px; list-style: disc;">
+      <li>Applied cryptography</li>
+      <li>Crypto and blockchain</li>
+      <li>Metabolic syndrome and mental health disorders</li>
+      <li>Financial markets and investing</li>
+    </ul>
     <p style="font-size: 15px; line-height: 1.6; color: var(--text-secondary); max-width: 600px; margin: 0;">
-      I've also been a bicycle mechanic, barista, barback, demolition construction worker, gym sales associate, software consultant, bagel maker, Python tutor, local news videographer, options intern at CME, babysitter, and roof snow remover.
+      Previously, I led <a href="https://nil.foundation/" target="_blank" rel="noopener noreferrer">=nil; Foundation</a> and invested at <a href="https://delphiventures.io/" target="_blank" rel="noopener noreferrer">Delphi Digital</a>.
     </p>
   </div>
 
@@ -44,7 +50,8 @@ const articles = (await getCollection('articles')).sort(
         height: 96px !important;
         margin-bottom: 24px !important;
       }
-      .profile-section p {
+      .profile-section p,
+      .profile-section ul {
         font-size: 16px !important;
       }
       .article-item {

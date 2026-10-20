@@ -1,117 +1,355 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { readdir } from 'fs/promises';
-import { join } from 'path';
+import photos from '../generated/photo-gallery.json';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
-// Get all photos from public/photos
-let photos: string[] = [];
-try {
-  const photosDir = join(process.cwd(), 'public/photos');
-  const files = await readdir(photosDir);
-  photos = files.filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file));
-} catch (error) {
-  console.log('No photos directory found');
-}
+const settings = JSON.parse(await readFile(join(process.cwd(), 'src/data/photo-gallery.json'), 'utf8'));
+const hiddenFiles = new Set<string>(settings.hidden || []);
+const isEditor = import.meta.env.DEV;
+const visibleCount = photos.filter(photo => !hiddenFiles.has(photo.file)).length;
+const renderedPhotos = isEditor ? photos : photos.filter(photo => !hiddenFiles.has(photo.file));
 ---
 
 <Layout title="Photos - Avi Zurlo">
-  <h1 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Photos</h1>
-
-  {photos.length > 0 ? (
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 32px;">
-      <div id="slideshow" style="text-align: center; width: 100%;">
-        <img
-          id="current-photo"
-          src=""
-          alt=""
-          style="max-width: 100%; max-height: 65vh; display: block; margin: 0 auto;"
-        />
-      </div>
-
-      <div style="display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%;">
-        <button
-          id="prev"
-          class="photo-btn"
-          style="background: none; border: 1px solid var(--border-primary); padding: 8px 16px; cursor: pointer; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13px; color: var(--text-primary); transition: all 0.2s;"
-        >
-          ←
-        </button>
-
-        <span id="counter" style="font-size: 13px; color: var(--text-tertiary); min-width: 60px; text-align: center;"></span>
-
-        <button
-          id="next"
-          class="photo-btn"
-          style="background: none; border: 1px solid var(--border-primary); padding: 8px 16px; cursor: pointer; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13px; color: var(--text-primary); transition: all 0.2s;"
-        >
-          →
-        </button>
+  <div id="gallery-shell" class="gallery-shell" data-editing="false">
+    <div class="gallery-header">
+      <h1>Photos</h1>
+      <div class="gallery-actions">
+        <span id="photo-count">{visibleCount} photos</span>
+        {isEditor && <button type="button" id="edit-gallery" class="text-button" aria-pressed="false" aria-controls="gallery-editor">Edit gallery</button>}
       </div>
     </div>
 
-    <script define:vars={{ photos }}>
-      // Shuffle array function
-      function shuffle(array) {
-        const shuffled = [...array];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        return shuffled;
-      }
+    {isEditor && (
+      <>
+      <div id="gallery-editor" class="gallery-editor" hidden>
+        <p>Use × on a photo to remove it from the gallery. You can restore removed photos below.</p>
+        <details id="removed-photos" hidden>
+          <summary id="removed-summary">Removed photos</summary>
+          <div id="removed-list" class="removed-list"></div>
+        </details>
+      </div>
+      <div id="editor-feedback" class="editor-feedback" hidden>
+        <span id="editor-status" role="status" aria-live="polite"></span>
+        <button type="button" id="undo-removal" class="text-button" hidden>Undo</button>
+      </div>
+      </>
+    )}
 
-      // Initialize slideshow
-      const shuffledPhotos = shuffle(photos);
-      let currentIndex = 0;
+    <div id="photo-gallery" class="photo-gallery" aria-label="Photo gallery, arranged by color palette">
+      {renderedPhotos.map((photo, index) => (
+        <div class="photo-card" data-photo-id={photo.id} hidden={hiddenFiles.has(photo.file)}>
+          <button
+            type="button" class="photo-tile"
+            data-full-src={photo.fullSrc} data-original-src={photo.originalSrc}
+            aria-label={`Enlarge photo ${index + 1}: ${photo.alt}`} aria-haspopup="dialog"
+          >
+            <img
+              src={photo.src} srcset={photo.srcSet}
+              sizes="(min-width: 864px) 260px, (min-width: 640px) calc((100vw - 88px) / 3), calc((100vw - 52px) / 2)"
+              alt={photo.alt} width={photo.width} height={photo.height}
+              loading={index < 9 ? 'eager' : 'lazy'} decoding="async" draggable="false"
+            />
+          </button>
+          {isEditor && <button type="button" class="remove-photo" aria-label={`Remove ${photo.alt} from gallery`} title="Remove from gallery">×</button>}
+        </div>
+      ))}
+    </div>
+    <p id="empty-gallery" style="color: var(--text-quaternary);" hidden={visibleCount > 0}>No photos yet.</p>
+  </div>
 
-      const photoImg = document.getElementById('current-photo');
-      const counter = document.getElementById('counter');
-      const prevBtn = document.getElementById('prev');
-      const nextBtn = document.getElementById('next');
-
-      function updatePhoto() {
-        photoImg.src = `/photos/${shuffledPhotos[currentIndex]}`;
-        counter.textContent = `${currentIndex + 1} / ${shuffledPhotos.length}`;
-      }
-
-      prevBtn.addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + shuffledPhotos.length) % shuffledPhotos.length;
-        updatePhoto();
-      });
-
-      nextBtn.addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % shuffledPhotos.length;
-        updatePhoto();
-      });
-
-      // Hover effects
-      const buttons = document.querySelectorAll('.photo-btn');
-      buttons.forEach(btn => {
-        btn.addEventListener('mouseenter', () => {
-          const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
-          const textColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim();
-          btn.style.background = bgColor;
-          btn.style.color = textColor;
-        });
-        btn.addEventListener('mouseleave', () => {
-          btn.style.background = 'none';
-          btn.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
-        });
-      });
-
-      // Keyboard navigation
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') {
-          prevBtn.click();
-        } else if (e.key === 'ArrowRight') {
-          nextBtn.click();
-        }
-      });
-
-      // Initial load
-      updatePhoto();
-    </script>
-  ) : (
-    <p style="color: var(--text-quaternary);">No photos yet.</p>
-  )}
+  <dialog id="photo-viewer" class="photo-viewer" aria-label="Enlarged photo" aria-describedby="photo-counter">
+    <div class="viewer-toolbar">
+      <p id="photo-counter" aria-live="polite" aria-atomic="true"></p>
+      <div class="viewer-controls">
+        <a id="photo-original" target="_blank" rel="noopener noreferrer">Original ↗</a>
+        <button type="button" id="photo-prev" aria-label="Previous photo">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
+        </button>
+        <button type="button" id="photo-next" aria-label="Next photo">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </button>
+        <button type="button" id="photo-close" aria-label="Close photo" autofocus>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M6 18 18 6" /></svg>
+        </button>
+      </div>
+    </div>
+    <div class="viewer-stage" id="viewer-stage">
+      <img id="viewer-preview" alt="" aria-hidden="true" />
+      <img id="viewer-image" alt="" decoding="async" />
+    </div>
+    <div class="viewer-feedback">
+      <p id="photo-load-status" role="status" aria-live="polite"></p>
+      <button type="button" id="photo-retry" hidden>Retry</button>
+    </div>
+  </dialog>
 </Layout>
+
+<style>
+  [hidden] { display: none !important; }
+  .gallery-header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+  .gallery-header h1 { font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin: 0; text-transform: uppercase; letter-spacing: 0.1em; }
+  .gallery-actions { display: flex; align-items: baseline; gap: 20px; font-size: 13px; }
+  #photo-count { color: var(--text-quaternary); }
+  .text-button { font: inherit; color: var(--text-primary); padding: 0; border: 0; border-bottom: 1px solid var(--border-primary); background: transparent; cursor: pointer; }
+  .gallery-editor { margin: -8px 0 24px; color: var(--text-tertiary); font-size: 13px; }
+  .gallery-editor p { margin: 0 0 12px; }
+  .gallery-editor summary { cursor: pointer; color: var(--text-primary); }
+  .editor-feedback { display: flex; gap: 16px; margin-bottom: 20px; font-size: 13px; color: var(--text-secondary); }
+  .removed-list { display: grid; gap: 12px; margin-top: 16px; }
+  .removed-list :global(.removed-item) { display: flex; align-items: center; gap: 12px; }
+  .removed-list :global(img) { width: 64px; height: 64px; object-fit: cover; }
+  .removed-list :global(button) { font: inherit; padding: 6px 12px; background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); cursor: pointer; margin-left: auto; }
+  .photo-gallery { columns: 2; column-gap: 12px; }
+  .photo-gallery.is-balanced { display: flex; gap: 12px; }
+  .photo-gallery :global(.gallery-column) { flex: 1; min-width: 0; }
+  .photo-card { position: relative; margin: 0 0 12px; break-inside: avoid; }
+  .photo-tile { position: relative; display: block; width: 100%; padding: 0; margin: 0; border: 0; background: var(--bg-secondary); cursor: zoom-in; transition: transform 720ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 720ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .photo-tile img { display: block; width: 100%; height: auto; user-select: none; }
+  .photo-tile:focus-visible { z-index: 2; outline: 2px solid var(--text-primary); outline-offset: 4px; }
+  .remove-photo { display: none; position: absolute; top: 8px; right: 8px; z-index: 3; width: 36px; height: 36px; padding: 0; border: 1px solid rgb(255 255 255 / 55%); border-radius: 50%; color: #fff; background: rgb(0 0 0 / 65%); cursor: pointer; align-items: center; justify-content: center; font: inherit; font-size: 24px; }
+  .gallery-shell[data-editing='true'] .remove-photo { display: flex; }
+  .remove-photo:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
+  button:disabled { cursor: wait; opacity: 0.5; }
+  @media (hover: hover) and (pointer: fine) {
+    .photo-tile:hover { z-index: 2; transform: translateY(-2px) scale(1.045); box-shadow: 0 14px 34px rgb(0 0 0 / 16%); }
+  }
+  @media (min-width: 640px) { .photo-gallery { columns: 3; } }
+  .photo-viewer { box-sizing: border-box; width: min(1100px, calc(100vw - 40px)); max-width: none; max-height: calc(100dvh - 40px); padding: 0; border: 0; background: transparent; color: #fff; overflow: visible; }
+  .photo-viewer::backdrop { background: rgb(0 0 0 / 94%); }
+  .viewer-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .viewer-toolbar p { margin: 0; font-size: 13px; color: #ccc; white-space: nowrap; }
+  .viewer-controls { display: flex; align-items: center; gap: 8px; }
+  .viewer-controls a { color: #ddd; font-size: 12px; border: 0; margin-right: 6px; white-space: nowrap; }
+  .viewer-controls button { display: grid; place-items: center; flex: 0 0 auto; width: 44px; height: 44px; border: 1px solid rgb(255 255 255 / 25%); border-radius: 50%; padding: 0; color: #fff; background: transparent; cursor: pointer; transition: background-color 150ms ease; }
+  .viewer-controls svg { display: block; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .viewer-controls button:hover { background: rgb(255 255 255 / 15%); }
+  .viewer-controls button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .viewer-stage { position: relative; height: min(74dvh, 820px); max-height: calc(100dvh - 160px); }
+  .viewer-stage img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+  #viewer-image { opacity: 0; transition: opacity 150ms ease; }
+  #viewer-image.is-loaded { opacity: 1; }
+  .viewer-feedback { min-height: 20px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 12px; color: #ccc; font-size: 12px; }
+  .viewer-feedback p { margin: 0; }
+  .viewer-feedback button { font: inherit; color: #fff; border: 0; border-bottom: 1px solid #fff; background: transparent; cursor: pointer; padding: 0; }
+  @media (max-width: 420px) { .viewer-controls { gap: 4px; } .viewer-controls button { width: 40px; height: 40px; } .viewer-controls a { font-size: 11px; margin-right: 0; } .viewer-toolbar { gap: 8px; } .viewer-toolbar p { font-size: 12px; } }
+  @media (prefers-reduced-motion: reduce) { .photo-tile, .viewer-controls button, #viewer-image { transition: none; } .photo-tile:hover { transform: none; } }
+</style>
+
+<script>
+  const gallery = document.querySelector<HTMLElement>('#photo-gallery')!;
+  const cards = Array.from(gallery.querySelectorAll<HTMLElement>('.photo-card'));
+  const tiles = cards.map(card => card.querySelector<HTMLButtonElement>('.photo-tile')!);
+  const visibleTiles = () => tiles.filter(tile => !tile.closest<HTMLElement>('.photo-card')!.hidden);
+  const viewer = document.querySelector<HTMLDialogElement>('#photo-viewer')!;
+  const viewerImage = document.querySelector<HTMLImageElement>('#viewer-image')!;
+  const viewerPreview = document.querySelector<HTMLImageElement>('#viewer-preview')!;
+  const counter = document.querySelector<HTMLElement>('#photo-counter')!;
+  const loadStatus = document.querySelector<HTMLElement>('#photo-load-status')!;
+  const retry = document.querySelector<HTMLButtonElement>('#photo-retry')!;
+  const original = document.querySelector<HTMLAnchorElement>('#photo-original')!;
+  let currentIndex = 0;
+  let photoAspectRatio = 1;
+  let previousOverflow = '';
+  let trigger: HTMLButtonElement | null = null;
+  let loadVersion = 0;
+  let loadTimeout: ReturnType<typeof setTimeout>;
+
+  function updateCount() {
+    const active = visibleTiles();
+    document.querySelector('#photo-count')!.textContent = `${active.length} photos`;
+    document.querySelector<HTMLElement>('#empty-gallery')!.hidden = active.length > 0;
+    active.forEach((tile, index) => tile.setAttribute('aria-label', `Enlarge photo ${index + 1} of ${active.length}: ${tile.querySelector('img')!.alt}`));
+  }
+
+  // Distribute the palette-sorted sequence into the shortest column so nearby
+  // colors stay together across the page as well as down each column.
+  function layoutGallery() {
+    const count = window.matchMedia('(min-width: 640px)').matches ? 3 : 2;
+    const columnWidth = (gallery.clientWidth - (count - 1) * 12) / count;
+    const columns = Array.from({ length: count }, () => {
+      const column = document.createElement('div');
+      column.className = 'gallery-column';
+      return column;
+    });
+    const heights = Array(count).fill(0);
+    cards.filter(card => !card.hidden).forEach(card => {
+      const column = heights.indexOf(Math.min(...heights));
+      const image = card.querySelector('img')!;
+      columns[column].append(card);
+      heights[column] += columnWidth * Number(image.getAttribute('height')) / Number(image.getAttribute('width')) + 12;
+    });
+    gallery.classList.add('is-balanced');
+    gallery.replaceChildren(...columns);
+  }
+  layoutGallery();
+  updateCount();
+  let galleryWidth = gallery.clientWidth;
+  new ResizeObserver(() => {
+    if (gallery.clientWidth !== galleryWidth) {
+      galleryWidth = gallery.clientWidth;
+      layoutGallery();
+    }
+  }).observe(gallery);
+
+  function loadLargeImage(url: string, fallback: string, version: number) {
+    const candidate = new Image();
+    const failed = () => {
+      if (version !== loadVersion || !viewer.open) return;
+      clearTimeout(loadTimeout);
+      if (url !== fallback) {
+        loadLargeImage(fallback, fallback, version);
+      } else {
+        loadStatus.textContent = 'Showing a preview. The larger image could not load.';
+        retry.hidden = false;
+      }
+    };
+    candidate.onload = () => {
+      if (version !== loadVersion || !viewer.open) return;
+      clearTimeout(loadTimeout);
+      viewerImage.src = candidate.src;
+      viewerImage.classList.add('is-loaded');
+      loadStatus.textContent = '';
+      retry.hidden = true;
+    };
+    candidate.onerror = failed;
+    loadTimeout = setTimeout(failed, 10000);
+    candidate.src = url;
+  }
+
+  function showPhoto(index: number) {
+    const active = visibleTiles();
+    if (!active.length) return viewer.close();
+    currentIndex = (index + active.length) % active.length;
+    const tile = active[currentIndex];
+    const thumbnail = tile.querySelector('img')!;
+    photoAspectRatio = Number(thumbnail.getAttribute('width')) / Number(thumbnail.getAttribute('height'));
+    const version = ++loadVersion;
+    clearTimeout(loadTimeout);
+    viewerImage.classList.remove('is-loaded');
+    viewerImage.removeAttribute('src');
+    viewerImage.alt = thumbnail.alt;
+    viewerPreview.src = thumbnail.currentSrc || thumbnail.src;
+    counter.textContent = `Photo ${currentIndex + 1} of ${active.length}`;
+    original.href = tile.dataset.originalSrc!;
+    loadStatus.textContent = 'Loading larger image…';
+    retry.hidden = true;
+    loadLargeImage(tile.dataset.fullSrc!, tile.dataset.originalSrc!, version);
+  }
+
+  tiles.forEach(tile => tile.addEventListener('click', () => {
+    trigger = tile;
+    previousOverflow = document.documentElement.style.overflow;
+    viewer.showModal();
+    document.documentElement.style.overflow = 'hidden';
+    showPhoto(visibleTiles().indexOf(tile));
+  }));
+  document.querySelector('#photo-prev')!.addEventListener('click', () => showPhoto(currentIndex - 1));
+  document.querySelector('#photo-next')!.addEventListener('click', () => showPhoto(currentIndex + 1));
+  document.querySelector('#photo-close')!.addEventListener('click', () => viewer.close());
+  retry.addEventListener('click', () => showPhoto(currentIndex));
+  viewer.addEventListener('click', event => {
+    if (event.target instanceof Element && event.target.closest('button, a')) return;
+    // object-fit leaves part of the image element empty. Hit-test the photograph
+    // itself so those side margins dismiss the viewer too.
+    const image = viewerImage.classList.contains('is-loaded') ? viewerImage : viewerPreview;
+    const rect = image.getBoundingClientRect();
+    const aspect = image.naturalWidth && image.naturalHeight ? image.naturalWidth / image.naturalHeight : photoAspectRatio;
+    const width = Math.min(rect.width, rect.height * aspect);
+    const height = width / aspect;
+    const left = rect.left + (rect.width - width) / 2;
+    const top = rect.top + (rect.height - height) / 2;
+    if (event.clientX < left || event.clientX > left + width || event.clientY < top || event.clientY > top + height) viewer.close();
+  });
+  viewer.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      showPhoto(currentIndex + (event.key === 'ArrowRight' ? 1 : -1));
+    }
+  });
+  viewer.addEventListener('close', () => {
+    loadVersion++;
+    clearTimeout(loadTimeout);
+    document.documentElement.style.overflow = previousOverflow;
+    viewerImage.removeAttribute('src');
+    viewerPreview.removeAttribute('src');
+    trigger?.focus({ preventScroll: true });
+  });
+
+  const editButton = document.querySelector<HTMLButtonElement>('#edit-gallery');
+  if (editButton) {
+    const editor = document.querySelector<HTMLElement>('#gallery-editor')!;
+    const shell = document.querySelector<HTMLElement>('#gallery-shell')!;
+    const feedback = document.querySelector<HTMLElement>('#editor-feedback')!;
+    const status = document.querySelector<HTMLElement>('#editor-status')!;
+    const undo = document.querySelector<HTMLButtonElement>('#undo-removal')!;
+    const removed = document.querySelector<HTMLDetailsElement>('#removed-photos')!;
+    const removedList = document.querySelector<HTMLElement>('#removed-list')!;
+    const undoStack: string[] = [];
+    let saving = false;
+
+    function renderRemoved() {
+      const hidden = cards.filter(card => card.hidden);
+      removed.hidden = !hidden.length;
+      document.querySelector('#removed-summary')!.textContent = `Removed photos (${hidden.length})`;
+      removedList.replaceChildren(...hidden.map(card => {
+        const item = document.createElement('div');
+        item.className = 'removed-item';
+        const image = card.querySelector('img')!.cloneNode(true) as HTMLImageElement;
+        image.removeAttribute('srcset'); image.removeAttribute('sizes');
+        image.width = 64; image.height = 64; image.alt = '';
+        const label = document.createElement('span');
+        label.textContent = card.querySelector('img')!.alt;
+        const restore = document.createElement('button');
+        restore.type = 'button'; restore.textContent = 'Restore';
+        restore.setAttribute('aria-label', `Restore ${label.textContent}`);
+        restore.addEventListener('click', () => saveChange(card.dataset.photoId!, 'restore'));
+        item.append(image, label, restore);
+        return item;
+      }));
+      undo.hidden = !undoStack.length;
+    }
+
+    async function saveChange(id: string, action: 'remove' | 'restore') {
+      if (saving) return;
+      saving = true;
+      feedback.hidden = false;
+      status.textContent = 'Saving…';
+      try {
+        const response = await fetch('/__gallery/edit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, action }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+        const hidden = new Set(data.hidden);
+        cards.forEach(card => { card.hidden = hidden.has(card.dataset.photoId); });
+        if (action === 'remove') undoStack.push(id);
+        else {
+          for (let i = undoStack.length - 1; i >= 0; i--) if (undoStack[i] === id) undoStack.splice(i, 1);
+        }
+        layoutGallery(); updateCount(); renderRemoved();
+        status.textContent = action === 'remove' ? 'Photo removed from the gallery. Saved.' : 'Photo restored. Saved.';
+      } catch {
+        status.textContent = 'Could not save the change. Please try again.';
+      } finally {
+        saving = false;
+      }
+    }
+
+    editButton.addEventListener('click', () => {
+      const editing = editButton.getAttribute('aria-pressed') !== 'true';
+      editButton.setAttribute('aria-pressed', String(editing));
+      editButton.textContent = editing ? 'Done editing' : 'Edit gallery';
+      shell.dataset.editing = String(editing);
+      editor.hidden = !editing;
+    });
+    cards.forEach(card => card.querySelector('.remove-photo')?.addEventListener('click', () => saveChange(card.dataset.photoId!, 'remove')));
+    undo.addEventListener('click', () => {
+      const id = undoStack.at(-1);
+      if (id) saveChange(id, 'restore');
+    });
+    renderRemoved();
+  }
+</script>

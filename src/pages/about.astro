@@ -13,39 +13,6 @@ const { Content } = await aboutEntry.render();
     <Content />
   </div>
 
-  <div class="interests-section">
-    <h2 style="font-size: 14px; font-weight: 400; color: var(--text-tertiary); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.1em;">Interests</h2>
-
-    <div class="interests-grid">
-      <div>
-        <div style="width: 100%; aspect-ratio: 1; overflow: hidden; margin-bottom: 16px;">
-          <img src="/ironman.JPG" alt="Ironman" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-        </div>
-        <p style="font-size: 13px; color: var(--text-tertiary); line-height: 1.5; margin: 0;">
-          Three Ironman 70.3s and a marathon. Training for a full Ironman.
-        </p>
-      </div>
-
-      <div>
-        <div style="width: 100%; aspect-ratio: 1; overflow: hidden; margin-bottom: 16px;">
-          <img src="/coffee.jpeg" alt="Coffee" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-        </div>
-        <p style="font-size: 13px; color: var(--text-tertiary); line-height: 1.5; margin: 0;">
-          Ratings for 75+ specialty coffee shops across the world.
-        </p>
-      </div>
-
-      <div>
-        <div style="width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); margin-bottom: 16px;">
-          <img src="/book.jpg" alt="Book" style="max-width: 85%; max-height: 85%; object-fit: contain;" />
-        </div>
-        <p style="font-size: 13px; color: var(--text-tertiary); line-height: 1.5; margin: 0;">
-          Favorite: <i>When We Cease to Understand the World</i> by Benjamín Labatut
-        </p>
-      </div>
-    </div>
-  </div>
-
   <style>
     .about-content :first-child {
       margin-top: 0;
@@ -75,35 +42,5 @@ const { Content } = await aboutEntry.render();
       }
     }
 
-    .interests-section {
-      margin-top: 48px;
-    }
-
-    @media (min-width: 640px) {
-      .interests-section {
-        margin-top: 80px;
-      }
-    }
-
-    .interests-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 32px;
-      max-width: 650px;
-    }
-
-    @media (min-width: 640px) {
-      .interests-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 36px;
-      }
-    }
-
-    @media (min-width: 768px) {
-      .interests-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 48px;
-      }
-    }
   </style>
 </Layout>

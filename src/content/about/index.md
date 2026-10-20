@@ -4,7 +4,7 @@ title: About
 
 ## EARLY YEARS
 
-I grew up in the historic [Lexington, MA](https://en.wikipedia.org/wiki/Lexington,_Massachusetts) just outside Boston. I started working young in typical New England fashion; shoveling snow in the winters and yard work summer through fall. By 14 I had my first year-round job at a local ice cream shop and ever since then I've been hustling. I was a demolition laborer, bagel maker, camp counselor, barista, barback, bartender, fitness instructor, and bicycle mechanic. I had 4am starts and 3am closes, double-shifts (and once a triple), and wherever I went I carried a sense of pride in my work. These jobs were immensely valuable and still shape much of my worldview today. They taught me to gratitude for all working people and how to grind out the mundane.
+I grew up in the historic [Lexington, MA](https://en.wikipedia.org/wiki/Lexington,_Massachusetts) just outside Boston. I started working young in typical New England fashion; shoveling snow in the winters and yard work summer through fall. By 14 I had my first year-round job at a local ice cream shop and ever since then I've been hustling. I was a demolition laborer, bagel maker, camp counselor, barista, barback, bartender, fitness instructor, and bicycle mechanic. I had 4am starts and 3am closes, double-shifts (and once a triple), and wherever I went I carried a sense of pride in my work. These jobs were immensely valuable and still shape much of my worldview today. They taught me gratitude for all working people and how to grind out the mundane.
 
 In high school, I got my first taste of entrepreneurship. I was a sneakerhead and in the absence of StockX, I built a global community marketplace of 15k+ members on Facebook. It taught me the world was a lot smaller on the internet and it was my first taste of building something of my own.
 
@@ -26,10 +26,18 @@ In late 2023 I joined [=nil; Foundation](https://nil.foundation/) after months o
 
 I left =nil; Foundation in April 2025. Despite holding the CEO title, I came to understand that I didn't have the authority to create change. 
 
-## CURRENTLY
+## ROBOTICS
 
-I spent a few months  traveling, meditating, and exploring what's next. Similar to my professional beginnings in crypto, last summer a casual interest turned into an obsession — this time, robotics.
+I spent a few months traveling, meditating, and exploring what’s next. Similar to my professional beginnings in crypto, in 2025 a casual interest turned into an obsession — this time, robotics.
 
 In August 2025, I started DRZ Capital with my best friend to invest in robotics companies. We were backed by a large family office and ran a couple of SPVs. I visited top labs across North America, met with dozens of founders, and built a network of researchers, hardware specialists, and enterprise buyers.
 
-Ultimately, my heart drew me back to operating. The opportunity to deploy frontier foundation models into the real-world was too great to passively participate.
+My heart drew me back to operating. In 2026, I started a robotics company to test whether robot learning could reliably perform useful work for high-mix machine shops, and whether they would pay for it. I split my time between customer discovery and engineering, met with 50 shop owners, tested hardware and teleoperation platforms, and trained policies in my garage.
+
+Ultimately my robots never left the garage. Remote teleoperation was too slow for the work I was targeting, learned policies were unreliable, and robots weren’t solving the most pressing problems shop owners faced.
+
+I wrote about [what machine shops taught me about robotics](/articles/what-machine-shops-taught-me-about-robotics).
+
+## CURRENTLY
+
+I’m looking at full-time roles.
